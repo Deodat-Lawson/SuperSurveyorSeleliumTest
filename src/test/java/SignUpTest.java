@@ -16,7 +16,7 @@ public class SignUpTest {
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
 
-    String url = "https://jhu-oose-f24.github.io/Team-SuperSurveyors/#/signup";  // Update with your actual URL.
+    String url = "https://jhu-oose-f24.github.io/Team-SuperSurveyors/#/signup"; 
     driver.get(url);
 
     // --- Page Title Verification ---
