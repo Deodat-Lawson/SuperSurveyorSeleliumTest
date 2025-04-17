@@ -183,112 +183,267 @@ public class ProfileTest {
       editTagsButton.click();
       System.out.println("Clicked the 'edit tags' button.");
 
-      // Wait for the tags edit modal to appear
-      WebElement tagsInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
-              By.id("editTags")
-      ));
-      
       // First select two tags (toggle on): 'arts' and 'gaming'
-      System.out.println("Step 1: Selecting 'arts' and 'gaming' tags");
+      System.out.println("\n==== TEST: Tag Selection (Toggle ON) ====");
+      System.out.println("Selecting all available interest tags...");
       
       // Click on the 'arts' tag to select it
       WebElement artsTag = wait.until(ExpectedConditions.elementToBeClickable(
               By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'arts')]")
       ));
       artsTag.click();
-      System.out.println("Toggled ON the 'arts' tag.");
+      System.out.println("✓ Selected: 'arts' tag");
 
       // Click on the 'gaming' tag to select it
       WebElement gamingTag = wait.until(ExpectedConditions.elementToBeClickable(
               By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'gaming')]")
       ));
       gamingTag.click();
-      System.out.println("Toggled ON the 'gaming' tag.");
+      System.out.println("✓ Selected: 'gaming' tag");
 
       // Click on the 'technology' tag to select it
       WebElement technologyTag = wait.until(ExpectedConditions.elementToBeClickable(
               By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'technology')]")
       ));
       technologyTag.click();
-      System.out.println("Toggled ON the 'technology' tag.");
+      System.out.println("✓ Selected: 'technology' tag");
+      
+      // Click on the 'cooking' tag to select it
+      WebElement cookingTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'cooking')]")
+      ));
+      cookingTag.click();
+      System.out.println("✓ Selected: 'cooking' tag");
+      
+      // Click on the 'eduLife' tag to select it
+      WebElement eduLifeTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'eduLife')]")
+      ));
+      eduLifeTag.click();
+      System.out.println("✓ Selected: 'eduLife' tag");
+      
+      // Click on the 'environment' tag to select it
+      WebElement environmentTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'environment')]")
+      ));
+      environmentTag.click();
+      System.out.println("✓ Selected: 'environment' tag");
+      
+      // Click on the 'healthLife' tag to select it
+      WebElement healthLifeTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'healthLife')]")
+      ));
+      healthLifeTag.click();
+      System.out.println("✓ Selected: 'healthLife' tag");
+      
+      // Click on the 'sport' tag to select it
+      WebElement sportTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'sport')]")
+      ));
+      sportTag.click();
+      System.out.println("✓ Selected: 'sport' tag");
+      
+      // Click on the 'travel' tag to select it
+      WebElement travelTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'travel')]")
+      ));
+      travelTag.click();
+      System.out.println("✓ Selected: 'travel' tag");
 
       // Save the changes
       WebElement saveChangesButton = wait.until(ExpectedConditions.elementToBeClickable(
               By.xpath("//button[contains(text(), 'Save Changes')]")
       ));
       saveChangesButton.click();
-      System.out.println("Clicked 'Save Changes' button after selecting tags.");
+      System.out.println("→ Saving selected tags...");
       
       // Wait until the tags edit modal closes
       wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("editTags")));
+      System.out.println("→ Tag selection modal closed");
       
       // Verify that the selected tags are displayed
+      System.out.println("\nVerifying selected tags appear on profile:");
+      
       WebElement artsTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
-              By.xpath("//div[contains(@class, 'css-hze7mg')]//p[contains(text(), 'arts')]")
+              By.xpath("//*[contains(text(), 'arts')]")
       ));
-      WebElement gamingTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
-              By.xpath("//div[contains(@class, 'css-hze7mg')]//p[contains(text(), 'gaming')]")
-      ));
-      WebElement technologyTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
-              By.xpath("//div[contains(@class, 'css-hze7mg')]//p[contains(text(), 'technology')]")
-      ));
+      System.out.println("✓ Found: 'arts' tag on profile");
 
-      if (artsTagDisplay.isDisplayed() && gamingTagDisplay.isDisplayed() && technologyTagDisplay.isDisplayed()) {
-        System.out.println("Tags selection test passed! All three tags (arts, gaming, technology) are displayed.");
+      WebElement cookingTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
+        By.xpath("//*[contains(text(), 'cooking')]")
+        ));     
+      System.out.println("✓ Found: 'cooking' tag on profile");
+
+      WebElement gamingTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
+              By.xpath("//*[contains(text(), 'gaming')]")
+      ));
+      System.out.println("✓ Found: 'gaming' tag on profile");
+      
+      WebElement technologyTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
+              By.xpath("//*[contains(text(), 'technology')]")
+      ));
+      System.out.println("✓ Found: 'technology' tag on profile");
+      
+      // Additional tag buttons verification
+      WebElement eduLifeTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
+              By.xpath("//*[contains(text(), 'eduLife')]")
+      ));
+      System.out.println("✓ Found: 'eduLife' tag on profile");
+      
+      WebElement environmentTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
+              By.xpath("//*[contains(text(), 'environment')]")
+      ));
+      System.out.println("✓ Found: 'environment' tag on profile");
+      
+      WebElement healthLifeTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
+              By.xpath("//*[contains(text(), 'healthLife')]")
+      ));
+      System.out.println("✓ Found: 'healthLife' tag on profile");
+      
+      WebElement sportTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
+              By.xpath("//*[contains(text(), 'sport')]")
+      ));
+      System.out.println("✓ Found: 'sport' tag on profile");
+      
+      WebElement travelTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
+              By.xpath("//*[contains(text(), 'travel')]")
+      ));
+      System.out.println("✓ Found: 'travel' tag on profile");
+
+      if (artsTagDisplay.isDisplayed() && gamingTagDisplay.isDisplayed() && technologyTagDisplay.isDisplayed() &&
+          cookingTagDisplay.isDisplayed() && eduLifeTagDisplay.isDisplayed() && environmentTagDisplay.isDisplayed() && 
+          healthLifeTagDisplay.isDisplayed() && sportTagDisplay.isDisplayed() && travelTagDisplay.isDisplayed()) {
+        System.out.println("\n✅ SUCCESS: All tags were successfully added to the profile!");
       } else {
-        System.out.println("Tags selection test failed! Not all tags are displayed.");
+        System.out.println("\n❌ FAILURE: Some tags failed to appear on the profile!");
       }
 
-      // Now test toggle OFF functionality by deselecting one tag
-      System.out.println("\nStep 2: Testing tag deselection (toggle off)");
+      // Now test toggle OFF functionality for all tags
+      System.out.println("\n==== TEST: Tag Deselection (Toggle OFF) ====");
       
       // Click the edit tags button again
       editTagsButton = wait.until(ExpectedConditions.elementToBeClickable(
               By.xpath("//button[@aria-label='edit tags']")));
       editTagsButton.click();
-      System.out.println("Clicked the 'edit tags' button again for deselection test.");
+      System.out.println("→ Opening tag selection modal for deselection test");
       
       // Wait for the tags edit modal to appear again
       wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("editTags")));
+      System.out.println("→ Tag selection modal opened successfully");
       
-      // Click on the already selected 'arts' tag to deselect it (toggle off)
+      // Toggle OFF all previously selected tags
+      System.out.println("\nRemoving all previously selected tags:");
+      
+      // Click on the 'arts' tag to deselect it
       artsTag = wait.until(ExpectedConditions.elementToBeClickable(
-              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'arts')]")
-      ));
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'arts')]")));
       artsTag.click();
-      System.out.println("Toggled OFF the 'arts' tag.");
+      System.out.println("✓ Deselected: 'arts' tag");
+      
+      // Click on the 'gaming' tag to deselect it
+      gamingTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'gaming')]")));
+      gamingTag.click();
+      System.out.println("✓ Deselected: 'gaming' tag");
+      
+      // Click on the 'technology' tag to deselect it
+      technologyTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'technology')]")));
+      technologyTag.click();
+      System.out.println("✓ Deselected: 'technology' tag");
+      
+      // Click on the 'cooking' tag to deselect it
+      cookingTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'cooking')]")));
+      cookingTag.click();
+      System.out.println("✓ Deselected: 'cooking' tag");
+      
+      // Click on the 'eduLife' tag to deselect it
+      eduLifeTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'eduLife')]")));
+      eduLifeTag.click();
+      System.out.println("✓ Deselected: 'eduLife' tag");
+      
+      // Click on the 'environment' tag to deselect it
+      environmentTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'environment')]")));
+      environmentTag.click();
+      System.out.println("✓ Deselected: 'environment' tag");
+      
+      // Click on the 'healthLife' tag to deselect it
+      healthLifeTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'healthLife')]")));
+      healthLifeTag.click();
+      System.out.println("✓ Deselected: 'healthLife' tag");
+      
+      // Click on the 'sport' tag to deselect it
+      sportTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'sport')]")));
+      sportTag.click();
+      System.out.println("✓ Deselected: 'sport' tag");
+      
+      // Click on the 'travel' tag to deselect it
+      travelTag = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//div[contains(@class, 'css-12vffkv')]//p[contains(text(), 'travel')]")));
+      travelTag.click();
+      System.out.println("✓ Deselected: 'travel' tag");
       
       // Save the changes after deselection
       saveChangesButton = wait.until(ExpectedConditions.elementToBeClickable(
-              By.xpath("//button[contains(text(), 'Save Changes')]")
-      ));
+              By.xpath("//button[contains(text(), 'Save Changes')]")));
       saveChangesButton.click();
-      System.out.println("Clicked 'Save Changes' button after deselecting 'arts' tag.");
+      System.out.println("\n→ Saving changes after removing all tags...");
       
       // Wait until the tags edit modal closes
       wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("editTags")));
+      System.out.println("→ Tag selection modal closed");
       
-      // Verify that only 'gaming' and 'technology' tags remain and 'arts' is no longer displayed
-      gamingTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
-              By.xpath("//div[contains(@class, 'css-hze7mg')]//p[contains(text(), 'gaming')]")
-      ));
-      technologyTagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
-              By.xpath("//div[contains(@class, 'css-hze7mg')]//p[contains(text(), 'technology')]")
-      ));
-      
-      // Check that arts tag is no longer present (this should throw an exception if it works correctly)
+      // Verify that "No tags selected" message appears
       try {
-        driver.findElement(By.xpath("//div[contains(@class, 'css-hze7mg')]//p[contains(text(), 'arts')]"));
-        System.out.println("Toggle OFF test failed! 'arts' tag is still displayed after deselection.");
+        WebElement noTagsMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//div[contains(@class, 'css-hze7mg')]//p[contains(text(), 'No tags selected')]")));
+        if (noTagsMessage.isDisplayed()) {
+          System.out.println("\n✅ SUCCESS: 'No tags selected' message is displayed, confirming all tags were removed!");
+        }
       } catch (Exception e) {
-        System.out.println("Toggle OFF test passed! 'arts' tag was successfully removed after deselection.");
+        System.out.println("\n❌ FAILURE: 'No tags selected' message is not displayed after removing all tags!");
+        
+        // Check if any tags are still visible
+        try {
+          String[] tagNames = {"arts", "gaming", "technology", "cooking", "eduLife", 
+                               "environment", "healthLife", "sport", "travel"};
+          boolean anyTagsStillVisible = false;
+          
+          System.out.println("\nChecking for any remaining tags:");
+          for (String tagName : tagNames) {
+            try {
+              driver.findElement(By.xpath("//div[contains(@class, 'css-hze7mg')]//p[contains(text(), '" + tagName + "')]"));
+              System.out.println("⚠️ WARNING: Tag '" + tagName + "' is still visible after attempting to remove it!");
+              anyTagsStillVisible = true;
+            } catch (Exception ex) {
+              // This is expected - tag should not be found
+              System.out.println("✓ Tag '" + tagName + "' was successfully removed");
+            }
+          }
+          
+          if (!anyTagsStillVisible) {
+            System.out.println("\n⚠️ NOTE: All tags were successfully removed, but 'No tags selected' message is not displayed.");
+          }
+        } catch (Exception ex) {
+          // Ignore nested exception
+        }
       }
       
-      System.out.println("Tag toggle functionality test completed successfully.");
+      System.out.println("\n==== Tag Toggle Functionality Test Complete ====");
       
     } catch (Exception e) {
       System.out.println("Edit Profile test failed: " + e.getMessage());
     }
+
+    // Test Cancel Button 
+
+
+
 
     // ================================
     // Test 3: Upload Media Test

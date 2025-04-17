@@ -5,6 +5,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
+import java.util.Set;
+import org.openqa.selenium.JavascriptExecutor;
 
 public class SignInTest {
   public static void main(String[] args) {
@@ -127,8 +129,211 @@ public class SignInTest {
       System.out.println("Sign up prompt verification failed: " + e.getMessage());
     }
 
-    //Sign In functionality test:
+    // ================================
+    // Test 1: Password Visibility Toggle
+    // ================================
     try {
+      System.out.println("\n--- Testing Password Visibility Toggle ---");
+      
+      // Navigate back to login page
+      driver.get(url);
+      
+      // Enter a password in the password field
+      WebElement passwordField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password")));
+      passwordField.clear();
+      String testPassword = "TestPassword123!";
+      passwordField.sendKeys(testPassword);
+      System.out.println("Entered password into the field");
+      
+      // Check that password is initially masked (type="password")
+      String passwordType = passwordField.getAttribute("type");
+      if ("password".equals(passwordType)) {
+        System.out.println("Password is initially masked (type='password') as expected");
+      } else {
+        System.out.println("Password is NOT masked initially. Current type: " + passwordType);
+      }
+      
+      // Find and click the eye button to toggle password visibility
+      // Using a simpler approach that doesn't rely on the SVG path directly
+      WebElement visibilityToggle = null;
+      try {
+        // Try finding the button by its aria-label (most reliable)
+        visibilityToggle = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[@aria-label='toggle password visibility']")));
+        System.out.println("Found visibility toggle button by aria-label");
+      } catch (Exception ex) {
+        try {
+          // Try finding the button that's near the password field
+          visibilityToggle = wait.until(ExpectedConditions.elementToBeClickable(
+                  By.xpath("//div[.//input[@id='password']]//button[contains(@class, 'MuiIconButton-root')]")));
+          System.out.println("Found visibility toggle button near password field");
+        } catch (Exception e) {
+          // Last resort - find any button with the MuiIconButton class near the end of the form
+          visibilityToggle = wait.until(ExpectedConditions.elementToBeClickable(
+                  By.xpath("//form//button[contains(@class, 'MuiIconButton-root')]")));
+          System.out.println("Found visibility toggle button using generic selector");
+        }
+      }
+      
+      System.out.println("Found the password visibility toggle button");
+      
+      // Scroll the button into view before clicking
+      ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", visibilityToggle);
+      Thread.sleep(500);
+      
+      visibilityToggle.click();
+      System.out.println("Clicked the visibility toggle button (eye icon)");
+      
+      // Check that password is now visible (type="text")
+      passwordType = passwordField.getAttribute("type");
+      if ("text".equals(passwordType)) {
+        System.out.println("Password is now visible (type='text') as expected after toggle");
+      } else {
+        System.out.println("Password visibility toggle failed. Current type: " + passwordType);
+      }
+      
+      // Click the toggle button again to hide the password
+      // Scroll the button into view again before clicking
+      ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", visibilityToggle);
+      Thread.sleep(500);
+      
+      visibilityToggle.click();
+      System.out.println("Clicked the visibility toggle button again (eye icon with slash)");
+      
+      // Check that password is masked again
+      passwordType = passwordField.getAttribute("type");
+      if ("password".equals(passwordType)) {
+        System.out.println("Password is masked again (type='password') as expected");
+        System.out.println("\n✅ SUCCESS: Password visibility toggle test PASSED! Toggle functionality works correctly.");
+      } else {
+        System.out.println("Password is not masked as expected. Current type: " + passwordType);
+        System.out.println("\n❌ FAILURE: Password visibility toggle test FAILED! Toggle functionality is not working properly.");
+      }
+    } catch (Exception e) {
+      System.out.println("Password visibility toggle test failed: " + e.getMessage());
+      e.printStackTrace();
+    }
+    
+    // ================================
+    // Test 2: Google Login Window
+    // ================================
+    try {
+      System.out.println("\n--- Testing Google Login Window ---");
+      
+      // Navigate back to login page
+      driver.get(url);
+      
+      // Get current window handle before clicking Google login
+      String mainWindowHandle = driver.getWindowHandle();
+      System.out.println("Main window handle: " + mainWindowHandle);
+      
+      // Find and click the Google login button
+      WebElement googleLoginButton = wait.until(ExpectedConditions.elementToBeClickable(
+              By.xpath("//button[contains(text(),'Login with Google') or contains(text(),'Login with')]")));
+      System.out.println("Found the Google login button");
+      googleLoginButton.click();
+      System.out.println("Clicked the Google login button");
+      
+      // Wait for the new window/tab to open (Google login)
+      wait.until(ExpectedConditions.numberOfWindowsToBe(2));
+      
+      // Get all window handles and switch to the new window
+      Set<String> windowHandles = driver.getWindowHandles();
+      System.out.println("Number of open windows: " + windowHandles.size());
+      
+      String googleWindowHandle = null;
+      for (String handle : windowHandles) {
+        if (!handle.equals(mainWindowHandle)) {
+          googleWindowHandle = handle;
+          driver.switchTo().window(googleWindowHandle);
+          System.out.println("Switched to Google login window: " + googleWindowHandle);
+          break;
+        }
+      }
+      
+      // Verify we're on a Google authentication page
+      // We don't need to actually log in, just verify the window opened properly
+      wait.until(ExpectedConditions.urlContains("accounts.google.com"));
+      String googleUrl = driver.getCurrentUrl();
+      System.out.println("Google login URL: " + googleUrl);
+      
+      if (googleUrl.contains("accounts.google.com")) {
+        System.out.println("Google login window verification PASSED!");
+      } else {
+        System.out.println("Google login window verification FAILED! Current URL: " + googleUrl);
+      }
+      
+    } catch (Exception e) {
+      System.out.println("Google login window test failed: " + e.getMessage());
+      e.printStackTrace();
+    }
+    
+    // ================================
+    // Test 3: Sign Up Link Navigation
+    // ================================
+    try {
+      System.out.println("\n--- Testing Sign Up Link Navigation ---");
+      
+      // Navigate back to login page
+      driver.get(url);
+      
+      // Find and click the Sign Up button/link using a more specific selector with the class information
+      try {
+        // Try a more specific XPath that uses the class information
+        WebElement signUpLink = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[contains(@class, 'MuiButton-root') and contains(@class, 'MuiButton-textPrimary') and contains(text(), 'Sign up')]")));
+        
+        System.out.println("Found the Sign up button");
+        
+        // Scroll the button into view before clicking to ensure it's visible
+        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", signUpLink);
+        
+        // Add a small wait to ensure the button is fully in view
+        Thread.sleep(500);
+        
+        // Click the button
+        signUpLink.click();
+        System.out.println("Clicked the Sign up button");
+      } catch (Exception ex) {
+        // If the regular click fails, try JavaScript executor as a last resort
+        System.out.println("→ Using JavaScript executor to click the Sign Up button");
+        WebElement element = driver.findElement(
+                By.xpath("//button[contains(text(), 'Sign up')]"));
+        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+        Thread.sleep(500);
+        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        System.out.println("Clicked the Sign up button using JavaScript");
+      }
+      
+      // Verify navigation to signup page
+      wait.until(ExpectedConditions.urlContains("/signup"));
+      String expectedSignUpUrl = "https://jhu-oose-f24.github.io/Team-SuperSurveyors/#/signup";
+      String actualSignUpUrl = driver.getCurrentUrl();
+      
+      if (actualSignUpUrl.equals(expectedSignUpUrl)) {
+        System.out.println("Sign up link navigation test PASSED! Redirected to: " + actualSignUpUrl);
+      } else {
+        System.out.println("Sign up link navigation test FAILED. Expected: " + expectedSignUpUrl + 
+                          ", but got: " + actualSignUpUrl);
+      }
+      
+      // Check for sign up page elements
+      WebElement signUpHeader = wait.until(ExpectedConditions.visibilityOfElementLocated(
+              By.xpath("//*[contains(text(), 'Create Account')]")));
+      if (signUpHeader.isDisplayed()) {
+        System.out.println("Sign Up page header verification passed!");
+      }
+      
+    } catch (Exception e) {
+      System.out.println("Sign up link navigation test failed: " + e.getMessage());
+      e.printStackTrace();
+    }
+
+    // Sign In functionality test:
+    try {
+      // Navigate back to login page
+      driver.get(url);
+      System.out.println("\n--- Testing Sign In Functionality ---");
 
       WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")));
       emailField.clear();
@@ -155,11 +360,14 @@ public class SignInTest {
       } else {
         System.out.println("Sign in functionality test failed. Current URL: " + driver.getCurrentUrl());
       }
+      
+    } catch (Exception e) {
+      System.out.println("Sign in functionality test failed: " + e.getMessage());
+      e.printStackTrace();
+    } finally {
       // Close the browser.
       driver.quit();
-    } catch (Exception e) {
-      System.out.println("Test encountered an error: " + e.getMessage());
+      System.out.println("\n--- All tests completed. Browser closed. ---");
     }
-
   }
 }
