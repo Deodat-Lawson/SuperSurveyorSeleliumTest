@@ -462,7 +462,6 @@ public class OnboardingTest {
       System.out.println("\n==== TEST: Continue Button Functionality ====");
       
       try {
-
      
         
         // Find and click the continue button
