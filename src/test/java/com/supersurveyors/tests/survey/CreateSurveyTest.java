@@ -1,3 +1,7 @@
+//Missing widget tests: Upload, TagDelete
+
+
+
 package com.supersurveyors.tests.survey;
 
 import org.openqa.selenium.By;
@@ -112,7 +116,9 @@ public class CreateSurveyTest {
         printTestHeader("STEP: Add Single Select Question (Q2)");
         try {
             WebElement addBtn = findAddQuestionButton(driver, wait, 1);
-            scrollAndClick(driver, addBtn, "Add Question (1st)");
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addBtn);
+            Thread.sleep(300);
+            addBtn.click();
 
             WebElement qInput = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
@@ -150,7 +156,9 @@ public class CreateSurveyTest {
             wait.until(ExpectedConditions.textToBePresentInElement(responseType, "Single Select"));
             printElementCheck(true, "Question 2 Type", "Set to Single Select");
 
-            addOptionsToQuestion(driver, wait, 2, new String[]{"VS Code", "IntelliJ IDEA", "Eclipse"});
+
+            addOptionsToQuestion(driver, wait, new String[]{"VS Code", "IntelliJ IDEA", "Eclipse"});
+            
         } catch (Exception e) {
             printTestResult(false, "Add Single Select Q", "Failed: " + e.getMessage());
             throw e;
@@ -160,68 +168,95 @@ public class CreateSurveyTest {
     private static void addMultipleSelectQuestion(WebDriver driver, WebDriverWait wait) throws InterruptedException {
         printTestHeader("STEP: Add Multiple Select Question (Q3)");
         try {
-            WebElement addBtn2 = findAddQuestionButton(driver, wait, 2);
-            scrollAndClick(driver, addBtn2, "Add Question (2nd)");
+            // Use index 1 as per user's change, click 'Add Question'
+            WebElement addBtn = findAddQuestionButton(driver, wait, 1); 
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addBtn);
+            Thread.sleep(300);
+            addBtn.click();
 
-            WebElement qInput2 = wait.until(
+            // Find the new question input field (assuming it's the next one)
+            WebElement qInput = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("//label[normalize-space(text())='Question']/following-sibling::*//input")
                 )
             );
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", qInput2);
+
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", qInput);
             Thread.sleep(300);
-            qInput2.clear();
-            qInput2.sendKeys("Which languages do you know?");
+            qInput.clear();
+            qInput.sendKeys("Which languages do you know?");
             printElementCheck(true, "Question 3 Text", "Entered Q3 text.");
 
-            List<WebElement> triggers = driver.findElements(By.cssSelector("div.MuiSelect-select"));
-            System.out.println("DEBUG: Found " + triggers.size() + " dropdown triggers.");
+            // Find all dropdown triggers
+            List<WebElement> triggers = driver.findElements(
+                By.cssSelector("div.MuiSelect-select")
+            );
+            System.out.println("DEBUG: Found " + triggers.size() + " dropdown triggers (MuiSelect-select) for Q3.");
             for (int i = 0; i < triggers.size(); i++) {
                 System.out.println("DEBUG: Trigger[" + i + "] text='" + triggers.get(i).getText() + "'");
             }
 
-            if (triggers.size() < 2) {
-                throw new RuntimeException("Not enough dropdown triggers; expected at least 2");
+            // Use the *second* trigger for Q3 (index 1)
+            if (triggers.size() < 2) { 
+                throw new RuntimeException("Expected at least 2 dropdown triggers for Q3, found " + triggers.size());
             }
-            WebElement responseType3 = triggers.get(1);
-            scrollAndClick(driver, responseType3, "Q3 Response Type");
+            WebElement responseType = triggers.get(0); // Index 1 for the second dropdown (Q3)
+            scrollAndClick(driver, responseType, "Q3 Response Type");
 
+            // Click the 'Multiple Select' option
             WebElement multiOpt = wait.until(
                 ExpectedConditions.elementToBeClickable(
-                    By.cssSelector("li[role='option'][data-value='checkbox']")
+                    By.cssSelector("li[role='option'][data-value='checkbox']") // data-value for multiple select
                 )
             );
             multiOpt.click();
-            wait.until(ExpectedConditions.textToBePresentInElement(responseType3, "Multiple Select"));
+            wait.until(ExpectedConditions.textToBePresentInElement(responseType, "Multiple Select"));
             printElementCheck(true, "Question 3 Type", "Set to Multiple Select");
 
-            addOptionsToQuestion(driver, wait, 3, new String[]{"Java", "Python", "JavaScript"});
+            // Add options
+            addOptionsToQuestion(driver, wait, new String[]{"Java", "Python", "JavaScript"});
+
+            //Add Question
+            addBtn = findAddQuestionButton(driver, wait, 1); 
+            scrollAndClick(driver, addBtn, "Add Question (for Q4)");
         } catch (Exception e) {
             printTestResult(false, "Add Multiple Select Q", "Failed: " + e.getMessage());
             throw e;
         }
     }
-
-    private static void addOptionsToQuestion(WebDriver driver, WebDriverWait wait, int i, String[] opts) {
-        printTestHeader("--> Adding Options to Question " + i);
-        String optXPath = String.format("(//input[@placeholder='Enter option'])[%d]", i);
-        String btnXPath = optXPath + "/following-sibling::button[contains(text(),'Add') or @aria-label='Add']";
-        for (String o : opts) {
-            try {
-                WebElement inp = wait.until(
-                    ExpectedConditions.visibilityOfElementLocated(By.xpath(optXPath))
-                );
-                inp.clear(); inp.sendKeys(o);
-                WebElement btn = wait.until(
-                    ExpectedConditions.elementToBeClickable(By.xpath(btnXPath))
-                );
-                scrollAndClick(driver, btn, "Add option '" + o + "'");
-                printElementCheck(true, "Add Option Q" + i, "Added '" + o + "'");
-            } catch (Exception e) {
-                printElementCheck(false, "Add Option Q" + i, "Failed to add '" + o + "': " + e.getMessage());
-            }
+    
+    private static void addOptionsToQuestion(WebDriver driver, WebDriverWait wait, String[] opts) throws InterruptedException {
+        printTestHeader("--> Adding Options");
+    
+        for (String optionText : opts) {
+            // 1) wait for the "Enter option" input to be visible
+            WebElement optionInput = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("input[placeholder='Enter option']")
+                )
+            );
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", optionInput);
+            optionInput.clear();
+            optionInput.sendKeys(optionText);
+            printElementCheck(true, "Enter Option", "Entered '" + optionText + "'");
+    
+            // 2) wait for the "Add" button to be clickable, then click
+            WebElement addBtn = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[normalize-space(text())='Add']")
+                )
+            );
+            scrollAndClick(driver, addBtn, "Add option '" + optionText + "'");
+    
+            // 3) verify the new option shows up in the list
+            By addedLocator = By.xpath("//span[normalize-space(text())='" + optionText + "']");
+            wait.until(ExpectedConditions.visibilityOfElementLocated(addedLocator));
+            printElementCheck(true, "Verify Option", "Verified '" + optionText + "' added.");
         }
     }
+    
+    
+    
 
     private static WebElement findAddQuestionButton(WebDriver driver, WebDriverWait wait, int idx) {
         String xp = String.format("(//button[contains(text(),'Add Question')])[%d]", idx);
@@ -230,12 +265,123 @@ public class CreateSurveyTest {
 
     private static void manageSurveyTags(WebDriver driver, WebDriverWait wait) throws InterruptedException {
         printTestHeader("STEP: Manage Survey Tags");
-        throw new UnsupportedOperationException("Tag management omitted for brevity");
+        try {
+            // 1) Locate the tags <div> (last MUI select)
+            List<WebElement> selects = wait.until(ExpectedConditions
+                .visibilityOfAllElementsLocatedBy(By.cssSelector("div.MuiSelect-select")));
+            WebElement tagSelect = selects.get(selects.size() - 1);
+    
+            // — open via JS click —
+            ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].scrollIntoView({block:'center'});",
+                tagSelect
+            );
+            printElementCheck(true, "Open Tags Dropdown", "Fired mousedown on Select");
+
+            Thread.sleep(300);
+            ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true}));",
+                tagSelect
+            );
+    
+            // 2) Choose up to 3 tags
+            List<WebElement> options = wait.until(ExpectedConditions
+                .visibilityOfAllElementsLocatedBy(By.cssSelector("ul[role='listbox'] li[role='option']")));
+            int toAdd = Math.min(8, options.size());
+    
+            for (int i = 1; i < toAdd; i++) {
+                WebElement opt = options.get(i);
+                String tagName = opt.getText();
+    
+                // JS‑click option
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", opt);
+                Thread.sleep(200);
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", opt);
+                printElementCheck(true, "Select Tag", tagName + " via JS");
+    
+                // verify chip appeared
+                wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//*[text()='" + tagName + "']")));
+                printElementCheck(true, "Verify Tag Added", tagName + " chip visible.");
+
+
+                if(i != toAdd - 1) {
+    
+                // re-open for next pick
+                selects = driver.findElements(By.cssSelector("div.MuiSelect-select"));
+                tagSelect = selects.get(selects.size() - 1);
+
+                ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].scrollIntoView({block:'center'});",
+                    tagSelect
+                );
+                printElementCheck(true, "Open Tags Dropdown", "Fired mousedown on Select");
+    
+                Thread.sleep(300);
+                ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true}));",
+                    tagSelect
+                );
+
+                options = wait.until(ExpectedConditions
+                    .visibilityOfAllElementsLocatedBy(By.cssSelector("ul[role='listbox'] li[role='option']")));
+                }
+            }
+    
+            // 3) Remove each chip normally
+        //     List<WebElement> chips = driver.findElements(By.cssSelector("MuiSvgIcon-root"));
+        //     for (WebElement chip : chips) {
+        //         String text = chip.findElement(By.cssSelector("span")).getText();
+        //         WebElement del = chip.findElement(By.cssSelector("svg.MuiChip-deleteIcon"));
+        //         ((JavascriptExecutor) driver).executeScript(
+        //             "arguments[0].scrollIntoView({block:'center'});",
+        //             del
+        //         );
+        //         printElementCheck(true, "Open Tags Dropdown", "Fired mousedown on Select");
+    
+        //         Thread.sleep(300);
+        //         ((JavascriptExecutor) driver).executeScript(
+        //             "arguments[0].dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true}));",
+        //             del
+        //         );
+
+        //         printElementCheck(true, "Verify Tag Removed", text + " removed.");
+        //     }
+    
+            printTestResult(true, "Manage Survey Tags", "Passed with JS clicks.");
+        } catch (Exception e) {
+            printTestResult(false, "Manage Survey Tags", "Failed: " + e.getMessage());
+            throw e;
+        }
     }
+    
 
     private static void submitSurvey(WebDriver driver, WebDriverWait wait) throws InterruptedException {
         printTestHeader("STEP: Submit Survey");
-        throw new UnsupportedOperationException("Submit omitted for brevity");
+            
+        // Find the submit button - must use XPath for text content
+        WebElement submitButton = wait.until(ExpectedConditions.elementToBeClickable(
+            By.xpath("//button[@type='submit' or contains(text(), 'Submit Survey')]")
+        ));
+        
+        ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].scrollIntoView({block:'center'});",
+                submitButton
+            );
+            printElementCheck(true, "Open Tags Dropdown", "Fired mousedown on Select");
+
+            Thread.sleep(300);
+            ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true}));",
+                submitButton
+            );
+
+        printElementCheck(true, "Submit Button", "Found the submit button");
+        
+        // Actually click the submit button
+        printElementCheck(true, "Submit Action", "Clicking the submit button");
+        submitButton.click();
+        
     }
 
     private static void scrollAndClick(WebDriver driver, WebElement el, String name) throws InterruptedException {
