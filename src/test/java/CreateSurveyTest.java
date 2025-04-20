@@ -102,8 +102,16 @@ public class CreateSurveyTest {
       WebElement addQuestionButton = wait.until(ExpectedConditions.elementToBeClickable(
               By.xpath("//button[contains(text(),'Add Question')]")
       ));
+
+      // Scroll the button into view
+      ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addQuestionButton);
+
+      // Add a small pause to ensure scrolling is complete (optional but sometimes helpful)
+      try { Thread.sleep(300); } catch (InterruptedException ie) {}
+
+      // Now click the button
       addQuestionButton.click();
-      System.out.println("Clicked 'Add Question' to add a second question.");
+      System.out.println("Clicked 'Add Question' button after scrolling.");
 
 
 
@@ -112,8 +120,12 @@ public class CreateSurveyTest {
 
       // Click the "Submit Survey" button.
       WebElement submitSurveyButton = wait.until(ExpectedConditions.elementToBeClickable(
-              By.xpath("//button[contains(text(),'Submit Survey')]")
+              By.xpath("//*[contains(text(),'Submit Survey')]")
       ));
+
+      ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitSurveyButton);
+      try { Thread.sleep(300); } catch (InterruptedException ie) {}
+      
       submitSurveyButton.click();
       System.out.println("Submit Survey button clicked.");
 
@@ -122,7 +134,7 @@ public class CreateSurveyTest {
       // wait for that condition. For example, wait until the "Submit Survey" button is no longer visible,
       // or a confirmation message appears. Here, we wait for the submit button to disappear:
       wait.until(ExpectedConditions.invisibilityOfElementLocated(
-              By.xpath("//button[contains(text(),'Submit Survey')]")
+              By.xpath("//*[contains(text(),'Submit Survey')]")
       ));
       System.out.println("Survey creation appears to be processed successfully.");
 
