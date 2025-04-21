@@ -8,6 +8,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import static com.supersurveyors.tests.TestUtils.*;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
 
 public class ProfileEditNameTest {
 
@@ -85,7 +87,9 @@ public class ProfileEditNameTest {
         WebElement nameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//label[contains(text(),'Display Name')]/following::input[1]")
         ));
-        nameInput.clear();
+        nameInput.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        nameInput.sendKeys(Keys.DELETE);
+
         nameInput.sendKeys(newName);
         System.out.println("→ Entered new display name: " + newName);
 
@@ -127,7 +131,8 @@ public class ProfileEditNameTest {
                 By.xpath("//label[contains(text(),'Display Name')]/following::input[1]")
         ));
         String tempName = "This Name Should Not Be Saved";
-        nameInput.clear();
+        nameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+        nameInput.sendKeys(Keys.DELETE);
         nameInput.sendKeys(tempName);
         System.out.println("→ Entered temporary display name: " + tempName);
 
@@ -171,7 +176,8 @@ public class ProfileEditNameTest {
         WebElement nameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//label[contains(text(),'Display Name')]/following::input[1]")
         ));
-        nameInput.clear();
+        nameInput.sendKeys(Keys.chord(Keys.COMMAND, "a"));
+        nameInput.sendKeys(Keys.DELETE);
         nameInput.sendKeys(resetName);
         System.out.println("→ Resetting name to: " + resetName);
         

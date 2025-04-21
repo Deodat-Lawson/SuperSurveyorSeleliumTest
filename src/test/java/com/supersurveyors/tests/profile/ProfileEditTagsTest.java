@@ -52,7 +52,7 @@ public class ProfileEditTagsTest {
 
             // --- Test: Tag Deselection --- 
             printTestHeader("TEST: TAG DESELECTION (TOGGLE OFF)");
-            deselectTags(driver, wait, tagNames);
+            selectTags(driver, wait, tagNames);
             verifyTagsOnProfile(driver, wait, tagNames, false);
 
             // --- Test: Tag Edit Cancel --- 
@@ -90,7 +90,7 @@ public class ProfileEditTagsTest {
         for (String tagName : tagNames) {
             try {
                 WebElement tag = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//div[contains(@class, 'MuiDialog-paper')]//p[contains(text(), '" + tagName + "')]")));
+                        By.xpath("//div[contains(@class, 'MuiDialog-paper')]//*[contains(text(), '" + tagName + "')]")));
                 ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", tag);
                 Thread.sleep(300);
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tag);
@@ -110,67 +110,6 @@ public class ProfileEditTagsTest {
         Thread.sleep(1000); // Wait for UI update
     }
 
-    private static void deselectTags(WebDriver driver, WebDriverWait wait, String[] tagNames) throws InterruptedException {
-        // Click edit tags button again
-        WebElement editTagsButton = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[@aria-label='edit tags']")));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", editTagsButton);
-        System.out.println("→ Clicked the 'edit tags' button using JavaScript for deselection");
-        Thread.sleep(2000); // Wait for modal and stability
-
-        // Disable intercepting div
-        try {
-            ((JavascriptExecutor) driver).executeScript(
-                "let overlay = document.querySelector('.MuiDialog-container.MuiDialog-scrollPaper'); " +
-                "if(overlay) { overlay.style.pointerEvents = 'none'; }"
-            );
-            System.out.println("→ Disabled pointer events on dialog container");
-        } catch (Exception e) {
-            System.out.println("→ Could not modify dialog container: " + e.getMessage());
-        }
-
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[contains(@class, 'MuiDialog-paper')]")));
-        System.out.println("→ Tags edit dialog is open for deselection");
-
-        // Deselect all tags using JavaScript
-        System.out.println("\n→ Removing all previously selected tags...");
-        try {
-            ((JavascriptExecutor) driver).executeScript(
-                "const chips = document.querySelectorAll('.MuiDialog-paper .MuiChip-root');" +
-                "console.log('Found ' + chips.length + ' chips to deselect');" +
-                "for(let i=0; i<chips.length; i++) {" +
-                "  setTimeout(() => { chips[i].click(); }, i * 300);" +
-                "}"
-            );
-            System.out.println("→ Deselected all tags using JavaScript with staggered clicks");
-            Thread.sleep(tagNames.length * 300 + 1000); // Wait for clicks
-        } catch (Exception e) {
-            System.out.println("→ Could not deselect tags with single script: " + e.getMessage());
-            // Fallback: Click individually
-            for (String tagName : tagNames) {
-                try {
-                    ((JavascriptExecutor) driver).executeScript(
-                        "const chips = Array.from(document.querySelectorAll('.MuiDialog-paper .MuiChip-root'));" +
-                        "const chip = chips.find(c => c.textContent.includes('" + tagName + "'));" +
-                        "if(chip) { chip.click(); }"
-                    );
-                    printElementCheck(true, "Deselected tag (fallback)", tagName);
-                    Thread.sleep(300);
-                } catch (Exception ex) {
-                    printElementCheck(false, "Deselecting tag (fallback)", tagName + " - Error: " + ex.getMessage());
-                }
-            }
-        }
-
-        // Save changes
-        WebElement saveChangesButton = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[contains(text(), 'Save Changes')]")));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", saveChangesButton);
-        System.out.println("\n→ Saving changes after removing all tags...");
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//div[contains(@class, 'MuiDialog-paper')]")));
-        Thread.sleep(1000); // Wait for UI update
-    }
-
     private static void verifyTagsOnProfile(WebDriver driver, WebDriverWait wait, String[] expectedTags, boolean shouldBePresent) {
         System.out.println("\n→ Verifying tags on profile (Expected present: " + shouldBePresent + ")");
         boolean overallResult = true;
@@ -179,7 +118,7 @@ public class ProfileEditTagsTest {
              for (String tagName : expectedTags) {
                 try {
                     WebElement tagDisplay = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                            By.xpath("//div[contains(@class, 'css-hze7mg')]//p[contains(text(), '" + tagName + "')]")));
+                            By.xpath("//div[contains(@class, 'css-hze7mg')]//*[contains(text(), '" + tagName + "')]")));
                     printElementCheck(true, "Found tag on profile", tagName);
                 } catch (Exception e) {
                     printElementCheck(false, "Found tag on profile", tagName);
@@ -192,7 +131,7 @@ public class ProfileEditTagsTest {
             // Verify "No tags selected" message or absence of tags
             try {
                 WebElement noTagsMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//div[contains(@class, 'css-hze7mg')]//p[contains(text(), 'No tags selected')]")));
+                        By.xpath("//div[contains(@class, 'css-hze7mg')]//*[contains(text(), 'No tags selected')]")));
                 printTestResult(true, "Tag Deselection Verification", "'No tags selected' message is displayed");
             } catch (Exception e) {
                 // If "No tags selected" isn't found, check if any tags are still visible
@@ -241,7 +180,7 @@ public class ProfileEditTagsTest {
         for (String tagName : tagsToSelectAndCancel) {
             try {
                  WebElement tag = wait.until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//div[contains(@class, 'MuiDialog-paper')]//p[contains(text(), '" + tagName + "')]")));
+                        By.xpath("//div[contains(@class, 'MuiDialog-paper')]//*[contains(text(), '" + tagName + "')]")));
                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tag);
                 printElementCheck(true, "Selected tag (for cancel)", tagName);
                 Thread.sleep(300);
