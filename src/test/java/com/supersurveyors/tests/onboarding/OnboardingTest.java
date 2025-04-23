@@ -484,7 +484,7 @@ public class OnboardingTest {
         
         // Verify navigation to home page
         String currentUrl = driver.getCurrentUrl();
-        if (currentUrl.contains("/home")) {
+        if (currentUrl.contains("/profile")) {
           System.out.println("✓ Successfully navigated to home page: " + currentUrl);
           System.out.println("\n✅ SUCCESS: Continue button functionality works correctly");
         } else {

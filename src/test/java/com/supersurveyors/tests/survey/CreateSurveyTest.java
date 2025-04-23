@@ -329,24 +329,24 @@ public class CreateSurveyTest {
             }
     
             // 3) Remove each chip normally
-        //     List<WebElement> chips = driver.findElements(By.cssSelector("MuiSvgIcon-root"));
-        //     for (WebElement chip : chips) {
-        //         String text = chip.findElement(By.cssSelector("span")).getText();
-        //         WebElement del = chip.findElement(By.cssSelector("svg.MuiChip-deleteIcon"));
-        //         ((JavascriptExecutor) driver).executeScript(
-        //             "arguments[0].scrollIntoView({block:'center'});",
-        //             del
-        //         );
-        //         printElementCheck(true, "Open Tags Dropdown", "Fired mousedown on Select");
+             List<WebElement> chips = driver.findElements(By.cssSelector("MuiSvgIcon-root"));
+             for (WebElement chip : chips) {
+                 String text = chip.findElement(By.cssSelector("span")).getText();
+                 WebElement del = chip.findElement(By.cssSelector("svg.MuiChip-deleteIcon"));
+                 ((JavascriptExecutor) driver).executeScript(
+                     "arguments[0].scrollIntoView({block:'center'});",
+                     del
+                 );
+                 printElementCheck(true, "Open Tags Dropdown", "Fired mousedown on Select");
     
-        //         Thread.sleep(300);
-        //         ((JavascriptExecutor) driver).executeScript(
-        //             "arguments[0].dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true}));",
-        //             del
-        //         );
+                 Thread.sleep(300);
+                 ((JavascriptExecutor) driver).executeScript(
+                     "arguments[0].dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true}));",
+                     del
+                 );
 
-        //         printElementCheck(true, "Verify Tag Removed", text + " removed.");
-        //     }
+                 printElementCheck(true, "Verify Tag Removed", text + " removed.");
+             }
     
             printTestResult(true, "Manage Survey Tags", "Passed with JS clicks.");
         } catch (Exception e) {
@@ -381,6 +381,8 @@ public class CreateSurveyTest {
         // Actually click the submit button
         printElementCheck(true, "Submit Action", "Clicking the submit button");
         submitButton.click();
+
+        Thread.sleep(300);
         
     }
 
