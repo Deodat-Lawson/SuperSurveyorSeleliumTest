@@ -21,10 +21,16 @@ This repository contains Selenium tests for the SuperSurveyors web application. 
 
 After setting your chrome webdriver, open this up in Intellij, Click the green run button beside each test to run it. 
 
+
 ### Additional Notes:
+
+- Note: Sometimes the 
+
+
 - The `CreateSurveyTest.java` must have enough coins for us to create a Survey. Ensure you have at least 5 coins when running this test. In the case where coins are not enough, run `AnswerTest.java` to get more coins by sumbitting responses.
 
 - All the Suvery Option Tests require a survey to exist. Run `CreateSurveyTest.java` if a survey does not exist.
+
 
 ## Test Suite Overview
 
