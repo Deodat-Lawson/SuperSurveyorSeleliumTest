@@ -12,10 +12,7 @@ This repository contains Selenium tests for the SuperSurveyors web application. 
 ## Setup
 
 1. Clone this repository
-2. Update the ChromeDriver path in the test files to match your local setup:
-   ```java
-   System.setProperty("webdriver.chrome.driver", "/path/to/your/chromedriver");
-   ```
+2. Open the repository in Intellij and set up your JDK (Preferable Version 21)
 
 ## Running Tests
 
@@ -24,7 +21,7 @@ After setting your chrome webdriver, open this up in Intellij, Click the green r
 
 ### Additional Notes:
 
-- Note: Note we implemented keychord and key presses in a 
+- Note: Note we implemented keychord and key presses following the MAC Keyboard settings. If you want to run it on Windows, switch all the COMMAND keys to CONTROL.
 
 
 - The `CreateSurveyTest.java` must have enough coins for us to create a Survey. Ensure you have at least 5 coins when running this test. In the case where coins are not enough, run `AnswerTest.java` to get more coins by sumbitting responses.
