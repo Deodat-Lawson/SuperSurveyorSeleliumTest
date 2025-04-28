@@ -14,7 +14,7 @@ import org.openqa.selenium.JavascriptExecutor;
 public class SignInTest {
   public static void main(String[] args) {
     // Set the path to the ChromeDriver executable. Update the path if necessary.
-    System.setProperty("webdriver.chrome.driver", "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
+    // System.setProperty("webdriver.chrome.driver", "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
 
     // Initialize the ChromeDriver.
     WebDriver driver = new ChromeDriver();

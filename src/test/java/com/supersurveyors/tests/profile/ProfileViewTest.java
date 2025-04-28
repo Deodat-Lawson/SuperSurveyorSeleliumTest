@@ -16,7 +16,7 @@ public class ProfileViewTest {
         WebDriverWait wait = null;
         try {
             // Setup WebDriver
-            System.setProperty("webdriver.chrome.driver", "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
+            // System.setProperty("webdriver.chrome.driver", "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
             driver = new ChromeDriver();
             wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             driver.manage().window().maximize();

@@ -24,7 +24,7 @@ After setting your chrome webdriver, open this up in Intellij, Click the green r
 
 ### Additional Notes:
 
-- Note: Sometimes the 
+- Note: Note we implemented keychord and key presses in a 
 
 
 - The `CreateSurveyTest.java` must have enough coins for us to create a Survey. Ensure you have at least 5 coins when running this test. In the case where coins are not enough, run `AnswerTest.java` to get more coins by sumbitting responses.

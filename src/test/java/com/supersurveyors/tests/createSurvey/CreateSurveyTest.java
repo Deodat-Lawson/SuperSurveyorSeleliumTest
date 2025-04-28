@@ -26,8 +26,8 @@ public class CreateSurveyTest {
 
         try {
             printTestHeader("SETUP: Initializing WebDriver");
-            System.setProperty("webdriver.chrome.driver",
-                    "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
+            // System.setProperty("webdriver.chrome.driver",
+            //         "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
             driver = new ChromeDriver();
             driver.manage().window().maximize();
             wait = new WebDriverWait(driver, Duration.ofSeconds(15));
@@ -259,12 +259,18 @@ public class CreateSurveyTest {
 
     
     
-    
-    
 
     private static WebElement findAddQuestionButton(WebDriver driver, WebDriverWait wait, int idx) {
-        String xp = String.format("(//button[contains(text(),'Add Question')])[%d]", idx);
-        return wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xp)));
+        List<WebElement> addBtns = driver.findElements(
+            By.cssSelector("[class*='MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1fudogb']"));
+        
+        if (addBtns.isEmpty()) {
+            // Fallback to XPath if CSS selector doesn't work
+            String xp = String.format("(//button[contains(text(),'Add Question')])[%d]", idx);
+            return wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xp)));
+        }
+        
+        return addBtns.get(idx - 1 < addBtns.size() ? idx - 1 : 0);
     }
 
     private static void manageSurveyTags(WebDriver driver, WebDriverWait wait) throws InterruptedException {

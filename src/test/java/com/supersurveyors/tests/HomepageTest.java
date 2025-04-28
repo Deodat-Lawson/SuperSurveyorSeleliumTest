@@ -13,7 +13,7 @@ import java.time.Duration;
 public class HomepageTest {
   public static void main(String[] args) {
 
-    System.setProperty("webdriver.chrome.driver", "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
+    // System.setProperty("webdriver.chrome.driver", "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
     WebDriver driver = new ChromeDriver();
 
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));

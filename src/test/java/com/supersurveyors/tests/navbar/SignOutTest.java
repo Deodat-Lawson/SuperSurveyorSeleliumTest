@@ -13,7 +13,7 @@ import java.time.Duration;
 public class SignOutTest {
     public static void main(String[] args) {
         // Set the path to your ChromeDriver executable (update as needed)
-        System.setProperty("webdriver.chrome.driver", "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
+        // System.setProperty("webdriver.chrome.driver", "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
 
         // Create a new instance of the ChromeDriver
         WebDriver driver = new ChromeDriver();

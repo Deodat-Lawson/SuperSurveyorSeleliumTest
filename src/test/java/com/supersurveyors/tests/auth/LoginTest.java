@@ -18,8 +18,9 @@ public class LoginTest {
     public static void main(String[] args) {
         WebDriver driver = null;
         try {
-            // Setup WebDriver
-            System.setProperty("webdriver.chrome.driver", "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
+            // Setup WebDriver     
+            // System.setProperty("webdriver.chrome.driver", "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
+       
             driver = new ChromeDriver();
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             driver.manage().window().maximize();
