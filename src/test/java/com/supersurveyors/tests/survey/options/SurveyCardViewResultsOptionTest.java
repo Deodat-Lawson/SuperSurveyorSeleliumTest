@@ -69,6 +69,7 @@ public class SurveyCardViewResultsOptionTest {
             wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//li[@role='menuitem' and .//span[contains(text(),'Results')]]")
             )).click();
+            Thread.sleep(500);
             wait.until(ExpectedConditions.urlContains("#/survey-results"));
             printTestResult(true,
                 "View Results option",
@@ -76,6 +77,7 @@ public class SurveyCardViewResultsOptionTest {
             );
             // Navigate back
             driver.navigate().back();
+            Thread.sleep(500);
             wait.until(ExpectedConditions.urlContains("#/view"));
             printTestResult(true, "View Results option", "Navigated back to View page successfully.");
 

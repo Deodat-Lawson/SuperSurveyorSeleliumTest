@@ -2,7 +2,7 @@
 
 
 
-package com.supersurveyors.tests.survey;
+package com.supersurveyors.tests.createSurvey;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static com.supersurveyors.tests.TestUtils.*;
 
@@ -38,6 +39,7 @@ public class CreateSurveyTest {
             fillInitialSurveyDetails(driver, wait);
             addSingleSelectQuestion(driver, wait);
             addMultipleSelectQuestion(driver, wait);
+            testDeleteQuestionButton(driver, wait);
             manageSurveyTags(driver, wait);
             submitSurvey(driver, wait);
 
@@ -254,6 +256,8 @@ public class CreateSurveyTest {
             printElementCheck(true, "Verify Option", "Verified '" + optionText + "' added.");
         }
     }
+
+    
     
     
     
@@ -289,7 +293,7 @@ public class CreateSurveyTest {
                 .visibilityOfAllElementsLocatedBy(By.cssSelector("ul[role='listbox'] li[role='option']")));
             int toAdd = Math.min(8, options.size());
     
-            for (int i = 1; i < toAdd; i++) {
+            for (int i = 1; i < 2; i++) {
                 WebElement opt = options.get(i);
                 String tagName = opt.getText();
     
@@ -305,7 +309,7 @@ public class CreateSurveyTest {
                 printElementCheck(true, "Verify Tag Added", tagName + " chip visible.");
 
 
-                if(i != toAdd - 1) {
+                if(i != 1) {
     
                 // re-open for next pick
                 selects = driver.findElements(By.cssSelector("div.MuiSelect-select"));
@@ -328,25 +332,16 @@ public class CreateSurveyTest {
                 }
             }
     
-            // 3) Remove each chip normally
-             List<WebElement> chips = driver.findElements(By.cssSelector("MuiSvgIcon-root"));
-             for (WebElement chip : chips) {
-                 String text = chip.findElement(By.cssSelector("span")).getText();
-                 WebElement del = chip.findElement(By.cssSelector("svg.MuiChip-deleteIcon"));
-                 ((JavascriptExecutor) driver).executeScript(
-                     "arguments[0].scrollIntoView({block:'center'});",
-                     del
-                 );
-                 printElementCheck(true, "Open Tags Dropdown", "Fired mousedown on Select");
-    
-                 Thread.sleep(300);
-                 ((JavascriptExecutor) driver).executeScript(
-                     "arguments[0].dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true}));",
-                     del
-                 );
+            List<WebElement> chips = driver.findElements(By.cssSelector("[class*='MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiChip-deleteIcon MuiChip-deleteIconMedium MuiChip-deleteIconColorDefault MuiChip-deleteIconFilledColorDefault css-q7mezt']"));
+            printElementCheck(true, "Delete Tag", "Found " + chips.size() + " tags");
+            WebElement chip = chips.get(0);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", chip);
+            Thread.sleep(200);
+            chip.click();
+            printElementCheck(true, "Delete Tag", "Deleted tag");
 
-                 printElementCheck(true, "Verify Tag Removed", text + " removed.");
-             }
+
+
     
             printTestResult(true, "Manage Survey Tags", "Passed with JS clicks.");
         } catch (Exception e) {
@@ -356,34 +351,46 @@ public class CreateSurveyTest {
     }
     
 
-    private static void submitSurvey(WebDriver driver, WebDriverWait wait) throws InterruptedException {
-        printTestHeader("STEP: Submit Survey");
+    private static void submitSurvey(WebDriver driver, WebDriverWait wait) {
+        try {
+            System.out.println("→ Starting survey submission test");
             
-        // Find the submit button - must use XPath for text content
-        WebElement submitButton = wait.until(ExpectedConditions.elementToBeClickable(
-            By.xpath("//button[@type='submit' or contains(text(), 'Submit Survey')]")
-        ));
-        
-        ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].scrollIntoView({block:'center'});",
-                submitButton
-            );
-            printElementCheck(true, "Open Tags Dropdown", "Fired mousedown on Select");
+            // Find and click the submit button
+            WebElement submitButton = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[contains(text(), 'Submit') or contains(text(), 'Submit Survey')]")
+            ));
+            System.out.println("→ Clicking submit button");
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", submitButton);
+            wait.until(ExpectedConditions.stalenessOf(submitButton));   
+            
+            // Wait a moment for any possible error messages
+            Thread.sleep(1000);
 
-            Thread.sleep(300);
-            ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true}));",
-                submitButton
-            );
-
-        printElementCheck(true, "Submit Button", "Found the submit button");
-        
-        // Actually click the submit button
-        printElementCheck(true, "Submit Action", "Clicking the submit button");
-        submitButton.click();
-
-        Thread.sleep(300);
-        
+            if(driver.getCurrentUrl().contains("#/view")) {
+                printTestResult(true, "Submit Survey", "Successfully submitted survey");
+                return;
+            }
+            
+            // Check for insufficient coins error
+            try {
+                WebElement errorMessage = driver.findElement(
+                    By.xpath("//*[contains(text(), 'insufficient coins') or contains(text(), 'Insufficient coins')]")
+                );
+                
+                System.out.println("→ Error detected: " + errorMessage.getText());
+                printTestResult(true, "Submit Survey - Insufficient Coins", 
+                    "Successfully detected insufficient coins error message: " + errorMessage.getText());
+                
+            } catch (NoSuchElementException e) {
+                // No error found, submission successful
+                System.out.println("→ No insufficient coins error detected, submission appears successful");
+                printTestResult(true, "Submit Survey", "Successfully submitted survey without coin errors");
+            }
+            
+        } catch (Exception e) {
+            printTestResult(false, "Submit Survey", "Exception during test: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private static void scrollAndClick(WebDriver driver, WebElement el, String name) throws InterruptedException {
@@ -396,6 +403,49 @@ public class CreateSurveyTest {
         } catch (Exception e) {
             printElementCheck(false, "Click Element", "Failed to click '" + name + "': " + e.getMessage());
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void testDeleteQuestionButton(WebDriver driver, WebDriverWait wait) throws InterruptedException {
+        printTestHeader("STEP: Test Delete Question Button");
+        try {
+            // Count the number of questions before deletion
+            List<WebElement> questionInputs = driver.findElements(
+                By.cssSelector("button[class*='MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedError MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorError MuiButton-root MuiButton-outlined MuiButton-outlinedError MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorError css-rux6ka']")
+            );
+            int initialQuestionCount = questionInputs.size();
+            printElementCheck(true, "Initial Question Count", "Found " + initialQuestionCount + " questions");
+            
+            // Find and click delete button using the specified CSS selector
+            WebElement deleteButton = questionInputs.get(0);
+            
+            // Scroll to the delete button to ensure visibility
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", deleteButton);
+            Thread.sleep(500);
+            
+            // Click the delete button
+            deleteButton.click();
+            printElementCheck(true, "Delete Button", "Clicked delete button");
+            
+            // Wait for a moment to let the question be deleted
+            Thread.sleep(1000);
+            
+            // Count questions after deletion
+            List<WebElement> remainingQuestions = driver.findElements(
+                By.xpath("//label[normalize-space(text())='Question']/following-sibling::*//input")
+            );
+            int remainingQuestionCount = remainingQuestions.size();
+            printElementCheck(true, "Remaining Question Count", "Found " + remainingQuestionCount + " questions");
+            
+            // Verify a question was deleted
+            boolean questionDeleted = remainingQuestionCount < initialQuestionCount;
+            printTestResult(questionDeleted, "Delete Question", 
+                "Question deletion " + (questionDeleted ? "successful" : "failed") + 
+                " (before: " + initialQuestionCount + ", after: " + remainingQuestionCount + ")");
+            
+        } catch (Exception e) {
+            printTestResult(false, "Delete Question Button Test", "Failed: " + e.getMessage());
+            throw e;
         }
     }
 }

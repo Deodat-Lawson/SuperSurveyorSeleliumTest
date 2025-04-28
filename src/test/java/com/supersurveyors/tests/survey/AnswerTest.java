@@ -337,7 +337,7 @@ public class AnswerTest {
             } else {
                 // Try alternative approach for styled radio buttons
                 List<WebElement> formControlLabels = driver.findElements(
-                    By.cssSelector("label.MuiFormControlLabel-root")
+                    By.cssSelector("input[class*='form-check-input']")
                 );
                 
                 if (!formControlLabels.isEmpty()) {
@@ -368,8 +368,8 @@ public class AnswerTest {
                 scrollToElement(driver, checkboxGroup);
                 
                 // Find checkbox options
-                List<WebElement> checkboxes = checkboxGroup.findElements(
-                    By.cssSelector("input[type='checkbox']")
+                List<WebElement> checkboxes = driver.findElements(
+                    By.cssSelector("input[class*='form-check-input']")
                 );
                 
                 if (checkboxes.size() >= 2) {
@@ -605,7 +605,7 @@ public class AnswerTest {
             // Find the "NOT INTERESTED?" button using XPath for text content
             debug("Looking for 'NOT INTERESTED? ANSWER A DIFFERENT SURVEY' button...");
             WebElement switchButton = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[contains(text(), 'NOT INTERESTED') and contains(text(), 'ANSWER A DIFFERENT SURVEY')]")
+                By.cssSelector("button[class*='MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-fullWidth css-x9wq2i']")
             ));
             debug("Switch button found: '" + switchButton.getText() + "'");
             

@@ -1,6 +1,6 @@
-//Completed
-
 package com.supersurveyors.tests.navbar;
+
+//Complete
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
-public class NavBarTest {
+public class SignOutTest {
     public static void main(String[] args) {
         // Set the path to your ChromeDriver executable (update as needed)
         System.setProperty("webdriver.chrome.driver", "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
@@ -74,61 +74,6 @@ public class NavBarTest {
             }
 
             Thread.sleep(1000);
-            
-            // 1. Test "Trending" button
-            WebElement trendingLink = driver.findElement(By.cssSelector("a[href='#/trending']"));
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", trendingLink);
-            
-            // Verify navigation to Trending page
-            wait.until(ExpectedConditions.urlContains("/trending"));
-            WebElement trendingPageTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//*[contains(text(), 'Trending')]")));
-            if (trendingPageTitle.isDisplayed()) {
-                System.out.println("Navigation to Trending page successful");
-            }
-            
-            // 2. Test "Create" button
-            WebElement createButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//a[@href='#/create']")));
-            System.out.println("Found Create button in NavBar");
-            createButton.click();
-            
-            // Verify navigation to Create page
-            wait.until(ExpectedConditions.urlContains("/create"));
-            WebElement createPageTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//h4[contains(text(), 'Create a Survey')]")));
-            if (createPageTitle.isDisplayed()) {
-                System.out.println("Navigation to Create page successful");
-            }
-            
-            // 3. Test "Answer" button
-            WebElement answerButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.xpath("//a[@href='#/answer']")));
-            System.out.println("Found Answer button in NavBar");
-            answerButton.click();
-            
-            // Verify navigation to Answer page
-            wait.until(ExpectedConditions.urlContains("/answer"));
-            System.out.println("Navigation to Answer page successful");
-            
-            // 4. Test "View" button
-//            WebElement viewButton = wait.until(ExpectedConditions.elementToBeClickable(
-//                    By.xpath("//a[@href='#/view']")));
-//            System.out.println("Found View button in NavBar");
-//            viewButton.click();
-//
-//            // Verify navigation to View page
-//            wait.until(ExpectedConditions.urlContains("/view"));
-//            viewPageTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(
-//                    By.xpath("//h4[contains(text(), 'Browse Results')]")));
-//            if (viewPageTitle.isDisplayed()) {
-//                System.out.println("Navigation to View page successful");
-//            }
-//
-            // 5. Verify user profile link in navbar
-            // 1. Click the avatar (using the <img>’s class)
-
-            Thread.sleep(1000);
             WebElement avatarImg = wait.until(
                     ExpectedConditions.elementToBeClickable(
                             By.xpath("//img[contains(@class,'MuiAvatar-img')]")
@@ -140,26 +85,21 @@ public class NavBarTest {
             //    (e.g. “Profile” or “Logout”; replace the text below accordingly)
             WebElement profileOption = wait.until(
                     ExpectedConditions.elementToBeClickable(
-                            By.xpath("//li[normalize-space(.)='Profile']")
+                            By.xpath("//li[normalize-space(.)='Sign Out']")
                     )
             );
             profileOption.click();
 
             
-            // Verify navigation to Profile page
-            wait.until(ExpectedConditions.urlContains("/profile"));
-            WebElement profilePageTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//h4[contains(@class, 'MuiTypography-root')]")));
-
+            // Verify navigation to login page
+            wait.until(ExpectedConditions.urlContains("/login"));
+           
             Thread.sleep(1000);
-            if (profilePageTitle.isDisplayed()) {
-                System.out.println("Navigation to Profile page successful");
-            }
             
-            System.out.println("NavBar navigation test completed successfully!");
+            System.out.println("Sign out test completed successfully!");
 
         } catch (Exception e) {
-            System.out.println("NavBar test failed: " + e.getMessage());
+            System.out.println("Sign out test failed: " + e.getMessage());
             e.printStackTrace();
         } finally {
             // Close the browser window
