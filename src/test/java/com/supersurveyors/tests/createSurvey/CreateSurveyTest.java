@@ -30,7 +30,7 @@ public class CreateSurveyTest {
             //         "/Users/timothylin/Downloads/chromedriver-mac-arm64 2/chromedriver");
             driver = new ChromeDriver();
             driver.manage().window().maximize();
-            wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+            wait = new WebDriverWait(driver, Duration.ofSeconds(5));
             printTestResult(true, "WebDriver Setup", "Initialization successful.");
 
             login(driver, wait, "timothylinziqimc@gmail.com", "test12345678!");
@@ -176,7 +176,7 @@ public class CreateSurveyTest {
             Thread.sleep(300);
             addBtn.click();
 
-            // Find the new question input field (assuming it's the next one)
+            // Find the new question input field (assuming it's the next on
             WebElement qInput = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("//label[normalize-space(text())='Question']/following-sibling::*//input")
