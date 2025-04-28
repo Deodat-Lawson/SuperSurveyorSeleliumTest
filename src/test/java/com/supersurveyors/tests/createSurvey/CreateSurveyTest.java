@@ -172,9 +172,7 @@ public class CreateSurveyTest {
         try {
             // Use index 1 as per user's change, click 'Add Question'
             WebElement addBtn = findAddQuestionButton(driver, wait, 1); 
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addBtn);
-            Thread.sleep(300);
-            addBtn.click();
+            scrollAndClick(driver, addBtn, "Add Question (for Q3)");
 
             // Find the new question input field (assuming it's the next on
             WebElement qInput = wait.until(
@@ -261,16 +259,24 @@ public class CreateSurveyTest {
     
 
     private static WebElement findAddQuestionButton(WebDriver driver, WebDriverWait wait, int idx) {
-        List<WebElement> addBtns = driver.findElements(
-            By.cssSelector("[class*='MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1fudogb']"));
-        
-        if (addBtns.isEmpty()) {
-            // Fallback to XPath if CSS selector doesn't work
+        try {
+            // First try finding by a more reliable xpath that includes text
             String xp = String.format("(//button[contains(text(),'Add Question')])[%d]", idx);
             return wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xp)));
+        } catch (Exception e) {
+            // If that fails, try CSS selector
+            List<WebElement> addBtns = driver.findElements(
+                By.cssSelector("[class*='MuiButton-outlined MuiButton-outlinedPrimary']"));
+            
+            if (addBtns.isEmpty()) {
+                throw new RuntimeException("No Add Question buttons found");
+            }
+            
+            System.out.println("→ Found " + addBtns.size() + " Add Question button candidates");
+            
+            // Return the appropriate button based on index, with bounds checking
+            return addBtns.get(Math.min(idx - 1, addBtns.size() - 1));
         }
-        
-        return addBtns.get(idx - 1 < addBtns.size() ? idx - 1 : 0);
     }
 
     private static void manageSurveyTags(WebDriver driver, WebDriverWait wait) throws InterruptedException {
@@ -401,11 +407,19 @@ public class CreateSurveyTest {
 
     private static void scrollAndClick(WebDriver driver, WebElement el, String name) throws InterruptedException {
         try {
-            // Scroll element to the bottom of the view
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", el);
-            Thread.sleep(500); // Increased pause after scroll
-            el.click();
-            printElementCheck(true, "Click Element", "'" + name + "' clicked.");
+            // Scroll element into center of view instead of top or bottom
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", el);
+            Thread.sleep(700); // Increased pause after scroll to let the page settle
+            
+            // Try using JavaScript click which bypasses visibility issues
+            try {
+                el.click();
+                printElementCheck(true, "Click Element", "'" + name + "' clicked.");
+            } catch (Exception e) {
+                // If normal click fails, use JavaScript click
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", el);
+                printElementCheck(true, "Click Element", "'" + name + "' clicked using JavaScript.");
+            }
         } catch (Exception e) {
             printElementCheck(false, "Click Element", "Failed to click '" + name + "': " + e.getMessage());
             throw new RuntimeException(e);
@@ -425,12 +439,7 @@ public class CreateSurveyTest {
             // Find and click delete button using the specified CSS selector
             WebElement deleteButton = questionInputs.get(0);
             
-            // Scroll to the delete button to ensure visibility
-            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", deleteButton);
-            Thread.sleep(500);
-            
-            // Click the delete button
-            deleteButton.click();
+            scrollAndClick(driver, deleteButton, "Delete Button");
             printElementCheck(true, "Delete Button", "Clicked delete button");
             
             // Wait for a moment to let the question be deleted
